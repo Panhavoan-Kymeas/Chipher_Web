@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>RSA Cipher Tool</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <div class="container">
+            <h1>RSA Cipher Tool</h1>
+            <p>Secure your messages with RSA encryption and decryption</p>
+
+            <div id="encrypt-fields">
+                <div class="input-group">
+                    <label for="p">Prime p:</label>
+                    <input type="number" id="p"
+                        placeholder="Enter a prime number">
+                </div>
+                <div class="input-group">
+                    <label for="q">Prime q:</label>
+                    <input type="number" id="q"
+                        placeholder="Enter another prime number">
+                </div>
+                <div class="input-group">
+                    <label for="e">Public exponent e:</label>
+                    <input type="number" id="e"
+                        placeholder="Enter public exponent">
+                </div>
+                <div class="input-group">
+                    <label for="plaintext">Message:</label>
+                    <textarea id="plaintext" rows="4"
+                        placeholder="Enter your message"></textarea>
+                </div>
+            </div>
+
+            <div id="decrypt-fields">
+                <div class="input-group">
+                    <label for="n">Modulus n:</label>
+                    <input type="number" id="n" placeholder="Enter modulus n">
+                </div>
+                <div class="input-group">
+                    <label for="d">Private exponent d:</label>
+                    <input type="number" id="d"
+                        placeholder="Enter private exponent">
+                </div>
+                <div class="input-group">
+                    <label for="ciphertext">Ciphertext:</label>
+                    <textarea id="ciphertext" rows="4"
+                        placeholder="Enter ciphertext"></textarea>
+                </div>
+            </div>
+
+            <button id="process" class="btn">Encrypt</button>
+            <button id="reset" class="btn">Reset</button>
+
+            <div class="toggle-container">
+                <span class="toggle-label">Encrypt</span>
+                <label class="toggle">
+                    <input type="checkbox" id="mode-toggle">
+                    <span class="slider"></span>
+                </label>
+                <span class="toggle-label">Decrypt</span>
+            </div>
+            <div id="result-container">
+                <h2>Result:</h2>
+                <p id="result"></p>
+                <div id="private-key-container">
+                    <button id="reveal-d">Reveal Private Key (d) and Modulus (n)</button>
+                    <p id="private-key"></p>
+                    <p id="modulus"></p>
+                </div>
+            </div>
+
+        </div>
+
+        <script src="script.js"></script>
+    </body>
+</html>
