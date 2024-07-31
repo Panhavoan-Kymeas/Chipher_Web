@@ -178,3 +178,10 @@ input:checked + .slider:before {
     border: 1px solid #bdc3c7;
     display: none;
 }
+
+.icon {
+    width: 33px;
+    height: auto;
+    vertical-align: -4px;
+    margin-right: 10px;
+}
