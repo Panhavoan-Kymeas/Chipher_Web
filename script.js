@@ -72,8 +72,8 @@ processButton.addEventListener("click", function () {
     let d = findD(p, q, e);
     let encrypted = [];
     for (var i = 0; i < m.length; i++) {
-      let characterAsValue = BigInt(m.charCodeAt(i) - 64);
-      if (characterAsValue >= 1n && characterAsValue <= 26n) {
+      let characterAsValue = BigInt(m.charCodeAt(i) - 65);
+      if (characterAsValue >= 0n && characterAsValue <= 25n) {
         encrypted.push(modPow(characterAsValue, e, n).toString());
       } else {
         encrypted.push("?");
@@ -93,8 +93,8 @@ processButton.addEventListener("click", function () {
       } else {
         let xBigInt = BigInt(x);
         let decryptedValue = modPow(xBigInt, d, n);
-        if (decryptedValue >= 1n && decryptedValue <= 26n) {
-          decrypted.push(String.fromCharCode(Number(decryptedValue) + 64));
+        if (decryptedValue >= 0n && decryptedValue <= 25n) {
+          decrypted.push(String.fromCharCode(Number(decryptedValue) + 65));
         } else {
           decrypted.push("?");
         }
