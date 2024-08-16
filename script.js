@@ -93,6 +93,7 @@ processButton.addEventListener("click", function () {
     let e = BigInt(document.getElementById("e").value);
     let plaintext = document.getElementById("plaintext").value;
     let n = p * q;
+    let nlenght = n.toString().length;
     let d = findD(p, q, e);
     console.log(`p: ${p}, q: ${q}, e: ${e}, n: ${n}, d: ${d}`);
 
@@ -107,18 +108,19 @@ processButton.addEventListener("click", function () {
       let encryptedChunk = modPow(BigInt(chunk), e, n).toString();
       console.log(`Original Chunk: ${chunk}`);
       console.log(
-        `Encrypted Chunk: ${encryptedChunk.padStart(blockSize + 2, "0")}`
+        `Encrypted Chunk: ${encryptedChunk.padStart(nlenght, "0")}`
       );
-      return encryptedChunk.padStart(blockSize + 2, "0");
+      return encryptedChunk.padStart(nlenght, "0");
     });
     resultDisplay.textContent = `Encrypted result: ${encrypted.join("")}`;
     privateKeyDisplay.textContent = `Private key (d): ${d}, Modulus (n): ${n}`;
   } else if (mode === "Decrypted") {
     let n = BigInt(document.getElementById("n").value);
     let d = BigInt(document.getElementById("d").value);
+    let nlenght = n.toString().length;
     let ciphertext = chunkString(
       document.getElementById("ciphertext").value,
-      getBlockSize(n) + 2
+      nlenght
     );
 
     console.log(`n: ${n}, d: ${d}`);
