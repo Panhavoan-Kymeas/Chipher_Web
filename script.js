@@ -32,20 +32,44 @@ function extendedGCD(a, b) {
 }
 
 function findD(p, q, e) {
-  // Calculate phi(n)
   let phi = (p - 1n) * (q - 1n);
-
-  // Compute modular inverse of e modulo phi
   let { gcd, x } = extendedGCD(e, phi);
-
   if (gcd !== 1n) {
     throw new Error(
       "The modular inverse does not exist, e and phi(n) must be coprime."
     );
   }
-
-  // Return the positive value of the modular inverse
   return ((x % phi) + phi) % phi;
+}
+
+function convertToNumericString(text) {
+  return text
+    .toUpperCase()
+    .split("")
+    .map((char) => String(char.charCodeAt(0) - 65).padStart(2, "0"))
+    .join("");
+}
+
+function convertFromNumericString(numericString) {
+  let text = "";
+  for (let i = 0; i < numericString.length; i += 2) {
+    let charCode = parseInt(numericString.substr(i, 2)) + 65;
+    text += String.fromCharCode(charCode);
+  }
+  return text;
+}
+
+function chunkString(str, chunkSize) {
+  let chunks = [];
+  for (let i = 0; i < str.length; i += chunkSize) {
+    chunks.push(str.substring(i, i + chunkSize));
+  }
+  return chunks;
+}
+
+function getBlockSize(n) {
+  let bitLength = n.toString(2).length;
+  return Math.floor((bitLength - 1) / 8) * 2;
 }
 
 modeToggle.addEventListener("change", function () {
@@ -67,47 +91,57 @@ processButton.addEventListener("click", function () {
     let p = BigInt(document.getElementById("p").value);
     let q = BigInt(document.getElementById("q").value);
     let e = BigInt(document.getElementById("e").value);
-    let m = document.getElementById("plaintext").value.toUpperCase();
+    let plaintext = document.getElementById("plaintext").value;
     let n = p * q;
     let d = findD(p, q, e);
-    let encrypted = [];
-    for (var i = 0; i < m.length; i++) {
-      let characterAsValue = BigInt(m.charCodeAt(i) - 65);
-      if (characterAsValue >= 0n && characterAsValue <= 25n) {
-        encrypted.push(modPow(characterAsValue, e, n).toString());
-      } else {
-        encrypted.push("?");
-      }
-    }
-    resultDisplay.textContent = `Encrypted result: ${encrypted.join(" ")}`;
+    console.log(`p: ${p}, q: ${q}, e: ${e}, n: ${n}, d: ${d}`);
+
+    let numericString = convertToNumericString(plaintext);
+    console.log(`Plaintext: ${plaintext}, Numeric String: ${numericString}`);
+
+    let blockSize = getBlockSize(n);
+    let chunks = chunkString(numericString, blockSize);
+    console.log(`Chunks: ${chunks}`);
+
+    let encrypted = chunks.map((chunk) => {
+      let encryptedChunk = modPow(BigInt(chunk), e, n).toString();
+      console.log(`Original Chunk: ${chunk}`);
+      console.log(
+        `Encrypted Chunk: ${encryptedChunk.padStart(blockSize + 2, "0")}`
+      );
+      return encryptedChunk.padStart(blockSize + 2, "0");
+    });
+    resultDisplay.textContent = `Encrypted result: ${encrypted.join("")}`;
     privateKeyDisplay.textContent = `Private key (d): ${d}, Modulus (n): ${n}`;
   } else if (mode === "Decrypted") {
     let n = BigInt(document.getElementById("n").value);
     let d = BigInt(document.getElementById("d").value);
-    let ciphertext = document.getElementById("ciphertext").value;
-    let decrypted = [];
+    let ciphertext = chunkString(
+      document.getElementById("ciphertext").value,
+      getBlockSize(n) + 2
+    );
 
-    for (let x of ciphertext.split(" ")) {
-      if (x === "?") {
-        decrypted.push("?");
-      } else {
-        let xBigInt = BigInt(x);
-        let decryptedValue = modPow(xBigInt, d, n);
-        if (decryptedValue >= 0n && decryptedValue <= 25n) {
-          decrypted.push(String.fromCharCode(Number(decryptedValue) + 65));
-        } else {
-          decrypted.push("?");
-        }
-      }
-    }
+    console.log(`n: ${n}, d: ${d}`);
+    console.log(`Ciphertext Chunks: ${ciphertext}`);
 
-    resultDisplay.textContent = `Decrypted result: ${decrypted.join("")}`;
+    let decryptedChunks = ciphertext
+      .map((chunk) => {
+        let decryptedChunk = modPow(BigInt(chunk), d, n)
+          .toString()
+          .padStart(getBlockSize(n), "0");
+        console.log(`Ciphertext Chunk: ${chunk}`);
+        console.log(`Decrypted Chunk: ${decryptedChunk}`);
+        return decryptedChunk;
+      })
+      .join("");
+
+    let plaintext = convertFromNumericString(decryptedChunks);
+    resultDisplay.textContent = `Decrypted result: ${plaintext}`;
   }
 
   resultContainer.style.display = "block";
 
   if (!modeToggle.checked) {
-    // Encryption mode
     privateKeyContainer.style.display = "block";
     privateKeyDisplay.style.display = "none";
     revealDAndNButton.textContent = "Reveal Private Key (d) and Modulus (n)";
